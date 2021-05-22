@@ -1,4 +1,5 @@
 import ast
+
 from flake8_typechecking_import import Plugin
 
 
@@ -70,4 +71,23 @@ def test_package():
     lines = ["import pack.mod"]
     assert _results(lines) == set()
     lines = ["import pack.mod", "pack"]
+    assert _results(lines) == set()
+
+
+def test_unused_type_checking():
+    lines = ["import typing", "if typing.TYPE_CHECKING:", "    import mod"]
+    assert _results(lines) == set()
+    lines = ["from typing import TYPE_CHECKING", "if TYPE_CHECKING:", "    import mod"]
+    assert _results(lines) == set()
+
+
+def test_annotated_type_checking():
+    lines = ["import typing", "if typing.TYPE_CHECKING:", "    import mod", "var: mod"]
+    assert _results(lines) == set()
+    lines = [
+        "from typing import TYPE_CHECKING",
+        "if TYPE_CHECKING:",
+        "    import mod",
+        "var: mod",
+    ]
     assert _results(lines) == set()

@@ -14,6 +14,7 @@ class Import:
     column: int
     module: str
     identifiers: list[str]
+    type_checking: bool = False
 
     def is_used(self: Import, names: set[str]) -> bool:
         if self.module in whitelist:
@@ -39,9 +40,13 @@ class Result:
     def combine(self, other: Result) -> Result:
         return Result(self.imports + other.imports, self.names + other.names)
 
-    def set_type_checking(self) -> None:
-        for name in self.names:
-            name.type_checking = True
+    def set_type_checking(self, *, names: bool = True, imports: bool = False) -> None:
+        if names:
+            for name in self.names:
+                name.type_checking = True
+        if imports:
+            for import_obj in self.imports:
+                import_obj.type_checking = True
 
     def regular_names(self) -> set[str]:
         return {name.identifier for name in self.names if not name.type_checking}
@@ -144,7 +149,7 @@ class Visitor(ast.NodeVisitor):
     def visit_If(self, node: ast.If) -> Result:  # noqa: N802
         result = self.generic_visit(node)
         if is_if_type_checking(node):
-            result.set_type_checking()
+            result.set_type_checking(imports=True)
         return result
 
 
@@ -162,6 +167,8 @@ class Plugin:
         typing_names = result.typing_names()
         regular_names = result.regular_names()
         for import_obj in result.imports:
+            if import_obj.type_checking:
+                continue
             if not import_obj.is_used(typing_names):
                 continue
             if import_obj.is_used(regular_names):
