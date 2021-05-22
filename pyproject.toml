@@ -7,7 +7,10 @@ module = "flake8_typechecking_import"
 author = "Adrian Room"
 author-email = "ingolemo@gmail.com"
 classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
-requires = ['flake8', 'pytest', 'astpretty']
+requires = ['flake8']
+
+[tool.flit.metadata.requires-extra]
+test = ['pytest']
 
 [tool.flit.entrypoints."flake8.extension"]
 TCI = "flake8_typechecking_import:Plugin"
