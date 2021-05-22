@@ -5,9 +5,7 @@ __version__ = "0.1"
 
 import ast
 import dataclasses
-from typing import Generator, Optional
-
-# from pprint import pprint
+from typing import Generator
 
 
 @dataclasses.dataclass
