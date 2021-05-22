@@ -38,15 +38,7 @@ class Result:
     def new(cls) -> Result:
         return Result([], [])
 
-    @staticmethod
-    def maybe(value: Optional[Result]) -> Result:
-        if value is None:
-            return Result.new()
-        return value
-
-    def combine(self, other: Optional[Result]) -> Result:
-        if other is None:
-            return self
+    def combine(self, other: Result) -> Result:
         return Result(self.imports + other.imports, self.names + other.names)
 
     def set_type_checking(self) -> None:
@@ -90,6 +82,11 @@ def is_if_type_checking(node: ast.If) -> bool:
 
 
 class Visitor(ast.NodeVisitor):
+    def visit(self, node: ast.AST) -> Result:
+        result = super().visit(node)
+        assert isinstance(result, Result)
+        return result
+
     def generic_visit(self, node: ast.AST) -> Result:
         result = Result.new()
         for node in ast.iter_child_nodes(node):
@@ -97,7 +94,7 @@ class Visitor(ast.NodeVisitor):
         return result
 
     def visit_Import(self, node: ast.Import) -> Result:  # noqa: N802
-        result = Result.maybe(self.generic_visit(node))
+        result = self.generic_visit(node)
         for alias in node.names:
             name = alias.name.split(".")[0]
             identifier = alias.name if alias.asname is None else alias.asname
@@ -112,18 +109,18 @@ class Visitor(ast.NodeVisitor):
             alias.name if alias.asname is None else alias.asname for alias in node.names
         ]
 
-        result = Result.maybe(self.generic_visit(node))
+        result = self.generic_visit(node)
         import_obj = Import(node.lineno, node.col_offset, module, identifiers)
         result.imports.append(import_obj)
         return result
 
     def visit_Name(self, node: ast.Name) -> Result:  # noqa: N802
-        result = Result.maybe(self.generic_visit(node))
+        result = self.generic_visit(node)
         result.names.append(Name(node.id))
         return result
 
     def visit_AnnAssign(self, node: ast.AnnAssign) -> Result:  # noqa: N802
-        result = Result.maybe(self.visit(node.target))
+        result = self.visit(node.target)
         if node.value is not None:
             result = result.combine(self.visit(node.value))
         return result
@@ -137,7 +134,7 @@ class Visitor(ast.NodeVisitor):
         return result
 
     def visit_If(self, node: ast.If) -> Result:  # noqa: N802
-        result = Result.maybe(self.generic_visit(node))
+        result = self.generic_visit(node)
         if is_if_type_checking(node):
             result.set_type_checking()
         return result
