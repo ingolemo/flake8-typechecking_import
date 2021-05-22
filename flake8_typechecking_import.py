@@ -123,15 +123,25 @@ class Visitor(ast.NodeVisitor):
         result = self.visit(node.target)
         if node.value is not None:
             result = result.combine(self.visit(node.value))
-        return result
+        type_result = self.visit(node.annotation)
+        type_result.set_type_checking()
+        return result.combine(type_result)
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> Result:  # noqa: N802
+        type_result = Result.new()
         result = Result.new()
-        for argnode in node.args.defaults:
-            result = result.combine(self.visit(argnode))
+        if node.returns:
+            type_result = type_result.combine(self.visit(node.returns))
+        for arg in node.args.args:
+            if arg.annotation is None:
+                continue
+            type_result = type_result.combine(self.visit(arg.annotation))
+        for defaults in node.args.defaults:
+            result = result.combine(self.visit(defaults))
         for subnode in node.body:
             result = result.combine(self.visit(subnode))
-        return result
+        type_result.set_type_checking()
+        return result.combine(type_result)
 
     def visit_If(self, node: ast.If) -> Result:  # noqa: N802
         result = self.generic_visit(node)
