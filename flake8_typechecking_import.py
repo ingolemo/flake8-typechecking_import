@@ -159,8 +159,11 @@ class Plugin:
         message = "TCI100 import {0!r} only necessary during TYPE_CHECKING"
         visitor = Visitor()
         result = visitor.visit(self.tree)
+        typing_names = result.typing_names()
         regular_names = result.regular_names()
         for import_obj in result.imports:
+            if not import_obj.is_used(typing_names):
+                continue
             if import_obj.is_used(regular_names):
                 continue
             line, col = import_obj.line, import_obj.column

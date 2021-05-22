@@ -15,9 +15,9 @@ def test_trivial_case():
 
 def test_unused_import():
     lines = ["import mod"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
     lines = ["import mod as alias"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
 
 
 def test_used_import():
@@ -50,14 +50,14 @@ def test_annotated_assignment_value():
 
 def test_multiple_unused_imports():
     lines = ["import mod", "import pack"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
     lines = ["import mod as mod_alias", "import pack as pack_alias"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
 
 
 def test_function_arguments():
     lines = ["import mod", "def func(arg: pack):", "    pass"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
     lines = ["import mod", "def func(arg: pack):", "    mod"]
     assert _results(lines) == set()
     lines = ["import mod", "def func(arg: mod):", "    pass"]
@@ -68,6 +68,6 @@ def test_function_arguments():
 
 def test_package():
     lines = ["import pack.mod"]
-    assert _results(lines) == {"TCI100"}
+    assert _results(lines) == set()
     lines = ["import pack.mod", "pack"]
     assert _results(lines) == set()
