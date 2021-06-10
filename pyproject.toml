@@ -30,3 +30,6 @@ fail_under=95
 omit=["venv/lib/*"]
 show_missing=true
 skip_covered=true
+
+[tool.mypy]
+strict = true
