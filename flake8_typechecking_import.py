@@ -1,6 +1,6 @@
 "A flake plugin that checks for typing.TYPE_CHECKING-able imports"
 
-__version__ = "0.3"
+__version__ = "0.4"
 
 import ast
 import dataclasses
