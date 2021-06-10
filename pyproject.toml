@@ -9,11 +9,11 @@ author-email = "ingolemo@gmail.com"
 home-page = "https://github.com/ingolemo/flake8-typechecking_import"
 description-file = "readme.rst"
 classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
-requires-python = ">3.9"
+requires-python = ">3.6"
 requires = ['flake8']
 
 [tool.flit.metadata.requires-extra]
-test = ['pytest', 'pytest-sugar', 'pytest-coverage', 'coverage[toml]']
+test = ['pytest', 'pytest-sugar', 'pytest-coverage', 'coverage[toml]', 'types-dataclasses']
 dev = ['black', 'mypy']
 
 [tool.flit.entrypoints."flake8.extension"]

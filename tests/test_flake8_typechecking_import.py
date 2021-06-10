@@ -1,9 +1,10 @@
+from typing import List, Set
 import ast
 
 from flake8_typechecking_import import Plugin
 
 
-def _results(lines: list[str]) -> set[str]:
+def _results(lines: List[str]) -> Set[str]:
     data = "\n".join(lines)
     tree = ast.parse(data)
     plugin = Plugin(tree)

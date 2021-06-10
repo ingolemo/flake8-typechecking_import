@@ -1,11 +1,10 @@
 "A flake plugin that checks for typing.TYPE_CHECKING-able imports"
-from __future__ import annotations
 
 __version__ = "0.3"
 
 import ast
 import dataclasses
-from typing import Generator
+from typing import Generator, List, Set, Tuple, Type
 
 
 @dataclasses.dataclass
@@ -13,10 +12,10 @@ class Import:
     line: int
     column: int
     module: str
-    identifiers: list[str]
+    identifiers: List[str]
     type_checking: bool = False
 
-    def is_used(self: Import, names: set[str]) -> bool:
+    def is_used(self: "Import", names: Set[str]) -> bool:
         if self.module in whitelist:
             return True
         return any(ident in names for ident in self.identifiers)
@@ -30,14 +29,14 @@ class Name:
 
 @dataclasses.dataclass
 class Result:
-    imports: list[Import]
-    names: list[Name]
+    imports: List[Import]
+    names: List[Name]
 
     @classmethod
-    def new(cls) -> Result:
+    def new(cls) -> "Result":
         return Result([], [])
 
-    def combine(self, other: Result) -> Result:
+    def combine(self, other: "Result") -> "Result":
         return Result(self.imports + other.imports, self.names + other.names)
 
     def set_type_checking(self, *, imports: bool = False) -> None:
@@ -47,10 +46,10 @@ class Result:
             for import_obj in self.imports:
                 import_obj.type_checking = True
 
-    def regular_names(self) -> set[str]:
+    def regular_names(self) -> Set[str]:
         return {name.identifier for name in self.names if not name.type_checking}
 
-    def typing_names(self) -> set[str]:
+    def typing_names(self) -> Set[str]:
         return {name.identifier for name in self.names if name.type_checking}
 
 
@@ -107,7 +106,7 @@ class Visitor(ast.NodeVisitor):
 
     def visit_ImportFrom(self, node: ast.ImportFrom) -> Result:  # noqa: N802
         module = find_module_name(node)
-        identifiers: list[str] = [
+        identifiers: List[str] = [
             alias.name if alias.asname is None else alias.asname for alias in node.names
         ]
 
@@ -159,7 +158,7 @@ class Plugin:
     def __init__(self, tree: ast.AST) -> None:
         self.tree = tree
 
-    def run(self) -> Generator[tuple[int, int, str, type[Plugin]], None, None]:
+    def run(self) -> Generator[Tuple[int, int, str, Type["Plugin"]], None, None]:
         message = "TCI100 import {0!r} only necessary during TYPE_CHECKING"
         visitor = Visitor()
         result = visitor.visit(self.tree)
