@@ -6,6 +6,7 @@ build-backend = "flit_core.buildapi"
 module = "flake8_typechecking_import"
 author = "Adrian Room"
 author-email = "ingolemo@gmail.com"
+home-page = "https://github.com/ingolemo/flake8-typechecking_import"
 description-file = "readme.rst"
 classifiers = ["License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
 requires = ['flake8']
