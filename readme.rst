@@ -8,7 +8,9 @@ only used in annotations. These imports can then be moved under an
 runtime. This can minimise the number of runtime dependencies that your
 modules have and perhaps also reduce the likelyhood of a circular import.
 
-For example::
+For example:
+
+.. code:: python
 
     import dataclasses
     import datetime
@@ -19,7 +21,9 @@ For example::
         birthday: datetime.date
 
 The above code will emit a lint (code: TCI100) telling you that it can
-be converted to this::
+be converted to this:
+
+.. code:: python
 
     import dataclasses
     import typing
