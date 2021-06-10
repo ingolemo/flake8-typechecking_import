@@ -10,7 +10,8 @@ classifiers = ["License :: OSI Approved :: GNU General Public License v3 or late
 requires = ['flake8']
 
 [tool.flit.metadata.requires-extra]
-test = ['pytest']
+test = ['pytest', 'pytest-sugar']
+dev = ['black', 'mypy']
 
 [tool.flit.entrypoints."flake8.extension"]
 TCI = "flake8_typechecking_import:Plugin"
