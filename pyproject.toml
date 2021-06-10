@@ -10,8 +10,20 @@ classifiers = ["License :: OSI Approved :: GNU General Public License v3 or late
 requires = ['flake8']
 
 [tool.flit.metadata.requires-extra]
-test = ['pytest', 'pytest-sugar']
+test = ['pytest', 'pytest-sugar', 'pytest-coverage', 'coverage[toml]']
 dev = ['black', 'mypy']
 
 [tool.flit.entrypoints."flake8.extension"]
 TCI = "flake8_typechecking_import:Plugin"
+
+[tool.pytest.ini_options]
+addopts = "--cov"
+
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+fail_under=95
+omit=["venv/lib/*"]
+show_missing=true
+skip_covered=true
