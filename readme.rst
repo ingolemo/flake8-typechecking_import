@@ -1,10 +1,10 @@
 
 Flake8-Typechecking_Import
-======
+==========================
 
 A plugin for flake8 that checks your code for imports that are
 only used in annotations. These imports can then be moved under an
-`if typing.TYPE_CHECKING:` block to prevent them being imported at
+``if typing.TYPE_CHECKING:`` block to prevent them being imported at
 runtime. This can minimise the number of runtime dependencies that your
 modules have and perhaps also reduce the likelyhood of a circular import.
 
