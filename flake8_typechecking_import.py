@@ -40,10 +40,9 @@ class Result:
     def combine(self, other: Result) -> Result:
         return Result(self.imports + other.imports, self.names + other.names)
 
-    def set_type_checking(self, *, names: bool = True, imports: bool = False) -> None:
-        if names:
-            for name in self.names:
-                name.type_checking = True
+    def set_type_checking(self, *, imports: bool = False) -> None:
+        for name in self.names:
+            name.type_checking = True
         if imports:
             for import_obj in self.imports:
                 import_obj.type_checking = True

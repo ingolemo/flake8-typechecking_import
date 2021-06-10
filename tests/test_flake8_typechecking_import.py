@@ -57,12 +57,16 @@ def test_multiple_unused_imports():
 
 
 def test_function_arguments():
+    lines = ["def func(arg):", "    pass"]
+    assert _results(lines) == set()
     lines = ["import mod", "def func(arg: pack):", "    pass"]
     assert _results(lines) == set()
     lines = ["import mod", "def func(arg: pack):", "    mod"]
     assert _results(lines) == set()
     lines = ["import mod", "def func(arg: mod):", "    pass"]
     assert _results(lines) == {"TCI100"}
+    lines = ["import mod", "def func(arg=mod.Data):", "    pass"]
+    assert _results(lines) == set()
     lines = ["import mod", "def func(arg: mod.Data):", "    pass"]
     assert _results(lines) == {"TCI100"}
 
@@ -90,4 +94,33 @@ def test_annotated_type_checking():
         "    import mod",
         "var: mod",
     ]
+    assert _results(lines) == set()
+
+
+def test_non_type_checking_if():
+    lines = ["if True:", "    var = 0"]
+    assert _results(lines) == set()
+
+
+def test_shadowing():
+    lines = ["import mod", "mod = 0", "var: mod.type = 0"]
+    assert _results(lines) == set()
+    # FIXME: handle shadowing of variables
+    # lines = ["import mod", "var: mod.type = 0", "mod = 0"]
+    # assert _results(lines) == {"TCI100"}
+
+
+def test_function_return():
+    lines = ["import mod", "def func() -> mod:", "    pass"]
+    assert _results(lines) == {"TCI100"}
+
+
+def test_relative_imports():
+    lines = ["from . import mod"]
+    assert _results(lines) == set()
+    lines = ["from . import mod", "var = mod.value"]
+    assert _results(lines) == set()
+    lines = ["from . import mod", "var: mod.Type = 0"]
+    assert _results(lines) == {"TCI100"}
+    lines = ["from . import mod", "var: mod.Type = mod.value"]
     assert _results(lines) == set()
