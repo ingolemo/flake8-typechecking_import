@@ -14,7 +14,7 @@ requires = ['flake8', 'dataclasses;python_version=="3.6"']
 
 [tool.flit.metadata.requires-extra]
 test = ['pytest', 'pytest-sugar', 'pytest-coverage', 'coverage[toml]', 'types-dataclasses']
-dev = ['black', 'mypy']
+dev = ['black', 'mypy', 'tox']
 
 [tool.flit.entrypoints."flake8.extension"]
 TCI = "flake8_typechecking_import:Plugin"
@@ -33,3 +33,14 @@ skip_covered=true
 
 [tool.mypy]
 strict = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{36,37,38,39},pypy3
+isolated_build = True
+
+[testenv]
+deps= .[test]
+commands = pytest
+"""
