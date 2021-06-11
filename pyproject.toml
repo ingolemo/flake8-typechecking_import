@@ -24,10 +24,10 @@ addopts = "--cov"
 
 [tool.coverage.run]
 branch = true
+source=["flake8_typechecking_import"]
 
 [tool.coverage.report]
 fail_under=95
-omit=["venv/lib/*"]
 show_missing=true
 skip_covered=true
 
